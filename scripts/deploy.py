@@ -10,8 +10,8 @@ import asyncio
 from pathlib import Path
 import shutil
 
-# Adicionar src ao path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Adicionar o diretório raiz ao path para permitir imports do pacote src
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.core.logger import get_trading_logger
 
@@ -266,7 +266,7 @@ MAX_DRAWDOWN_PCT=0.15
                 print("  ✅ Arquivo .env já existe")
             
             # Configurar variáveis de ambiente
-            os.environ['PYTHONPATH'] = str(self.project_root / "src")
+            os.environ['PYTHONPATH'] = str(self.project_root)
             
             print("  ✅ Variáveis de ambiente configuradas")
             print()
@@ -497,8 +497,8 @@ Start Script - Inicia o BTC Perpetual Elite Trader
 import sys
 from pathlib import Path
 
-# Adicionar src ao path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Adicionar o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from main import main
 
@@ -526,8 +526,8 @@ Setup Script - Configuração do BTC Perpetual Elite Trader
 import sys
 from pathlib import Path
 
-# Adicionar src ao path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Adicionar o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from scripts.setup import main
 
@@ -554,8 +554,8 @@ import sys
 import asyncio
 from pathlib import Path
 
-# Adicionar src ao path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+# Adicionar o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from scripts.test_system import main
 

@@ -8,8 +8,8 @@ import sys
 import asyncio
 from pathlib import Path
 
-# Adicionar src ao path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Adicionar o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.core.configuration_manager import ConfigurationManager
 from src.core.logger import get_trading_logger

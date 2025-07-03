@@ -10,8 +10,8 @@ import unittest
 from pathlib import Path
 import time
 
-# Adicionar src ao path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+# Adicionar o diretório raiz ao path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.core.configuration_manager import ConfigurationManager
 from src.core.system_manager import SystemManager
