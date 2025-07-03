@@ -18,8 +18,8 @@ import yaml
 import argparse
 from datetime import datetime
 
-# Adicionar src ao path
-sys.path.append(str(Path(__file__).parent / "src"))
+# Adicionar o diretório raiz ao path para permitir imports do pacote src
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.core.system_manager import SystemManager
 from src.core.config_manager import ConfigManager
