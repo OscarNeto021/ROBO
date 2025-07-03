@@ -1,0 +1,321 @@
+# BTC Perpetual Elite Trader - Configuração Principal
+# Otimizado para capital inicial de $200 mensais
+
+# =============================================================================
+# CONFIGURAÇÕES DA EXCHANGE
+# =============================================================================
+exchange:
+  name: "binance"
+  type: "futures"
+  testnet: true  # Sempre começar com testnet
+  api_key: "${BINANCE_API_KEY}"
+  api_secret: "${BINANCE_API_SECRET}"
+  base_url: ""  # Auto-detectado baseado em testnet
+  
+  # Configurações de conexão
+  timeout: 30
+  retries: 3
+  rate_limit_buffer: 0.1  # 10% de buffer nos rate limits
+
+# =============================================================================
+# CONFIGURAÇÕES DE CAPITAL E RISCO
+# =============================================================================
+capital:
+  initial_balance: 200.0  # USD
+  monthly_addition: 200.0  # USD adicionados mensalmente
+  compound_profits: true   # Reinvestir lucros automaticamente
+  
+  # Gestão de crescimento
+  scaling_factor: 1.2     # Aumentar posições conforme capital cresce
+  max_capital_usage: 0.8  # Usar no máximo 80% do capital
+
+risk_management:
+  # Limites globais
+  max_portfolio_risk: 0.12        # 12% do capital em risco
+  max_position_size: 0.05         # 5% por posição individual
+  max_daily_loss: 0.03           # 3% perda máxima diária
+  max_drawdown: 0.15             # 15% drawdown máximo
+  
+  # Value at Risk
+  var_confidence: 0.05           # 95% de confiança
+  var_lookback_days: 30          # Janela para cálculo VaR
+  
+  # Position sizing
+  kelly_fraction: 0.25           # 25% do Kelly Criterion
+  volatility_target: 0.15       # 15% volatilidade alvo
+  
+  # Stop loss e take profit
+  dynamic_stops: true
+  atr_multiplier: 2.0
+  min_stop_loss: 0.02           # 2% mínimo
+  max_stop_loss: 0.08           # 8% máximo
+
+# =============================================================================
+# ESTRATÉGIAS DE TRADING
+# =============================================================================
+strategies:
+  # Funding Rate Arbitrage - Estratégia Principal
+  funding_arbitrage:
+    enabled: true
+    priority: 1
+    allocation: 0.4               # 40% do capital
+    
+    # Parâmetros
+    min_funding_rate: 0.005       # 0.5% mínimo para ativar
+    max_position_size: 0.8        # 80% do capital da estratégia
+    holding_period_hours: 8       # Manter até próximo funding
+    
+    # Proteções
+    max_spread: 0.001             # 0.1% spread máximo spot-futures
+    min_liquidity: 100000         # $100k liquidez mínima
+    
+  # Market Making Algorítmico
+  market_making:
+    enabled: true
+    priority: 2
+    allocation: 0.3               # 30% do capital
+    
+    # Parâmetros de spread
+    base_spread: 0.0005           # 0.05% spread base
+    spread_multiplier: 1.5        # Multiplicador dinâmico
+    max_spread: 0.002             # 0.2% spread máximo
+    
+    # Gestão de inventário
+    inventory_limit: 0.1          # 10% do capital em inventário
+    inventory_decay: 0.95         # Fator de decay do inventário
+    
+    # Proteção adverse selection
+    adverse_selection_threshold: 0.7
+    order_timeout: 60             # 60 segundos timeout
+    
+  # Statistical Arbitrage
+  statistical_arbitrage:
+    enabled: true
+    priority: 3
+    allocation: 0.2               # 20% do capital
+    
+    # Pares de trading
+    pairs: ["BTCUSDT-ETHUSDT"]
+    lookback_period: 252          # 1 ano de dados
+    
+    # Sinais
+    entry_zscore: 2.0             # Z-score para entrada
+    exit_zscore: 0.5              # Z-score para saída
+    max_holding_days: 7           # Máximo 7 dias por trade
+    
+  # Machine Learning Ensemble
+  ml_ensemble:
+    enabled: true
+    priority: 4
+    allocation: 0.1               # 10% do capital
+    
+    # Modelos
+    models: ["xgboost", "lstm", "random_forest"]
+    ensemble_method: "stacking"
+    
+    # Sinais
+    confidence_threshold: 0.65    # 65% confiança mínima
+    max_trades_per_day: 5         # Máximo 5 trades/dia
+    min_edge: 0.001              # 0.1% edge mínimo
+
+# =============================================================================
+# DADOS E FEATURES
+# =============================================================================
+data:
+  # Símbolos principais
+  primary_symbol: "BTCUSDT"
+  secondary_symbols: ["ETHUSDT", "ADAUSDT", "SOLUSDT"]
+  
+  # Timeframes
+  timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+  primary_timeframe: "5m"
+  
+  # Histórico
+  lookback_days: 90             # 3 meses de dados
+  min_data_points: 1000         # Mínimo para começar trading
+  
+  # WebSocket
+  websocket_enabled: true
+  orderbook_depth: 20
+  trade_stream: true
+  
+  # Features
+  technical_indicators: 45      # 45+ indicadores técnicos
+  sentiment_features: true      # Features de sentimento
+  onchain_features: true        # Features on-chain
+  microstructure_features: true # Features de microestrutura
+
+# =============================================================================
+# MODELOS DE MACHINE LEARNING
+# =============================================================================
+models:
+  # XGBoost
+  xgboost:
+    enabled: true
+    params:
+      n_estimators: 1000
+      max_depth: 6
+      learning_rate: 0.1
+      subsample: 0.8
+      colsample_bytree: 0.8
+      random_state: 42
+    
+  # LSTM
+  lstm:
+    enabled: true
+    params:
+      sequence_length: 60
+      hidden_size: 128
+      num_layers: 2
+      dropout: 0.2
+      epochs: 100
+      batch_size: 32
+    
+  # Random Forest
+  random_forest:
+    enabled: true
+    params:
+      n_estimators: 500
+      max_depth: 10
+      min_samples_split: 5
+      random_state: 42
+  
+  # Ensemble
+  ensemble:
+    method: "stacking"            # ou "voting", "blending"
+    meta_learner: "logistic"      # Meta-learner para stacking
+    cv_folds: 5                   # Cross-validation folds
+    
+  # Regime Detection
+  regime_detection:
+    enabled: true
+    method: "hmm"                 # Hidden Markov Model
+    n_regimes: 4                  # 4 regimes de mercado
+    features: ["volatility", "volume", "returns"]
+
+# =============================================================================
+# EXECUÇÃO E ORDENS
+# =============================================================================
+execution:
+  # Modo de execução
+  mode: "live"                    # "paper", "live"
+  
+  # Configurações de ordem
+  order_type: "limit"             # Preferir ordens limitadas
+  post_only: true                 # Apenas maker orders
+  reduce_only: false              # Permitir aumentar posições
+  
+  # Timing
+  execution_delay: 0.1            # 100ms delay entre ordens
+  max_slippage: 0.001            # 0.1% slippage máximo
+  
+  # Retry logic
+  max_retries: 3
+  retry_delay: 1.0               # 1 segundo entre tentativas
+  
+  # Fees
+  maker_fee: 0.0002              # 0.02% maker fee
+  taker_fee: 0.0004              # 0.04% taker fee
+
+# =============================================================================
+# MONITORAMENTO E ALERTAS
+# =============================================================================
+monitoring:
+  # Dashboard
+  dashboard_enabled: true
+  dashboard_port: 8080
+  update_frequency: 1            # 1 segundo
+  
+  # Métricas
+  calculate_sharpe: true
+  calculate_sortino: true
+  calculate_calmar: true
+  rolling_window: 30             # 30 dias para métricas rolling
+  
+  # Alertas
+  alerts_enabled: true
+  alert_channels: ["console", "file"]  # "email", "telegram"
+  
+  # Condições de alerta
+  alert_conditions:
+    high_drawdown: 0.10          # 10% drawdown
+    low_sharpe: 1.0              # Sharpe < 1.0
+    high_var: 0.05               # VaR > 5%
+    connection_loss: 30          # 30s sem dados
+    
+# =============================================================================
+# LOGGING E DEBUGGING
+# =============================================================================
+logging:
+  level: "INFO"                   # DEBUG, INFO, WARNING, ERROR
+  file: "logs/trading.log"
+  max_size: "100MB"
+  backup_count: 5
+  
+  # Componentes específicos
+  strategy_logs: true
+  execution_logs: true
+  risk_logs: true
+  data_logs: false               # Muito verboso
+  
+# =============================================================================
+# BACKTESTING
+# =============================================================================
+backtesting:
+  # Período
+  start_date: "2024-01-01"
+  end_date: "2024-12-31"
+  
+  # Configurações
+  initial_capital: 200.0
+  commission: 0.0004             # 0.04% comissão
+  slippage: 0.0001              # 0.01% slippage
+  
+  # Análise
+  benchmark: "BTCUSDT"           # Benchmark para comparação
+  risk_free_rate: 0.02          # 2% taxa livre de risco
+  
+  # Relatórios
+  generate_report: true
+  report_format: "html"          # "html", "pdf"
+  include_trades: true
+  include_charts: true
+
+# =============================================================================
+# CONFIGURAÇÕES AVANÇADAS
+# =============================================================================
+advanced:
+  # Performance
+  multiprocessing: true
+  max_workers: 4
+  
+  # Cache
+  cache_enabled: true
+  cache_size: 1000               # Número de itens em cache
+  
+  # Otimização
+  jit_compilation: true          # Numba JIT
+  vectorized_operations: true    # Operações vetorizadas
+  
+  # Desenvolvimento
+  debug_mode: false
+  profiling: false
+  save_predictions: false        # Salvar predições para análise
+
+# =============================================================================
+# CONFIGURAÇÕES DE AMBIENTE
+# =============================================================================
+environment:
+  timezone: "UTC"
+  locale: "en_US.UTF-8"
+  
+  # Paths
+  data_path: "data/"
+  models_path: "data/models/"
+  logs_path: "logs/"
+  
+  # Backup
+  backup_enabled: true
+  backup_frequency: "daily"      # "hourly", "daily", "weekly"
+  backup_retention: 30           # 30 dias
+

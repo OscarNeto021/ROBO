@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTC Perpetual Elite Trader - Dashboard</title>
+    
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-lg border-b border-gray-700">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-robot text-2xl text-blue-400"></i>
+                        <h1 class="text-2xl font-bold text-white">BTC Perpetual Elite</h1>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div id="status-indicator" class="w-3 h-3 rounded-full bg-gray-500"></div>
+                        <span id="status-text" class="text-sm text-gray-400">Conectando...</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <div class="text-sm text-gray-400">Saldo Atual</div>
+                        <div id="current-balance" class="text-xl font-bold text-green-400">$0.00</div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button id="start-trading" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-play mr-2"></i>Iniciar
+                        </button>
+                        <button id="stop-trading" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition-colors">
+                            <i class="fas fa-stop mr-2"></i>Parar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total PnL -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">PnL Total</p>
+                        <p id="total-pnl" class="text-2xl font-bold text-green-400">$0.00</p>
+                    </div>
+                    <div class="bg-green-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-chart-line text-green-400"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span id="pnl-change" class="text-sm text-green-400">
+                        <i class="fas fa-arrow-up mr-1"></i>+0.00%
+                    </span>
+                    <span class="text-gray-400 text-sm ml-2">hoje</span>
+                </div>
+            </div>
+
+            <!-- Active Positions -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Posições Ativas</p>
+                        <p id="active-positions" class="text-2xl font-bold text-blue-400">0</p>
+                    </div>
+                    <div class="bg-blue-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-coins text-blue-400"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span id="positions-change" class="text-sm text-gray-400">
+                        <i class="fas fa-minus mr-1"></i>0 mudanças
+                    </span>
+                </div>
+            </div>
+
+            <!-- Total Trades -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Total de Trades</p>
+                        <p id="total-trades" class="text-2xl font-bold text-purple-400">0</p>
+                    </div>
+                    <div class="bg-purple-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-exchange-alt text-purple-400"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span id="win-rate" class="text-sm text-purple-400">
+                        <i class="fas fa-percentage mr-1"></i>0% win rate
+                    </span>
+                </div>
+            </div>
+
+            <!-- Sharpe Ratio -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm">Sharpe Ratio</p>
+                        <p id="sharpe-ratio" class="text-2xl font-bold text-yellow-400">0.00</p>
+                    </div>
+                    <div class="bg-yellow-500 bg-opacity-20 p-3 rounded-full">
+                        <i class="fas fa-chart-bar text-yellow-400"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span id="drawdown" class="text-sm text-yellow-400">
+                        <i class="fas fa-arrow-down mr-1"></i>0.00% drawdown
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- PnL Chart -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4">Performance (PnL)</h3>
+                <div class="h-64">
+                    <canvas id="pnl-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Balance Chart -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4">Evolução do Saldo</h3>
+                <div class="h-64">
+                    <canvas id="balance-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Strategies and Positions Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Strategies -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4">Estratégias</h3>
+                <div id="strategies-list" class="space-y-3">
+                    <!-- Strategies will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Active Positions -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4">Posições Ativas</h3>
+                <div id="positions-list" class="space-y-3">
+                    <!-- Positions will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Trades -->
+        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+            <h3 class="text-lg font-semibold mb-4">Trades Recentes</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-2">Horário</th>
+                            <th class="text-left py-2">Símbolo</th>
+                            <th class="text-left py-2">Lado</th>
+                            <th class="text-left py-2">Quantidade</th>
+                            <th class="text-left py-2">Preço</th>
+                            <th class="text-left py-2">PnL</th>
+                            <th class="text-left py-2">Estratégia</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trades-table">
+                        <!-- Trades will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 py-4 mt-8">
+        <div class="container mx-auto px-6 text-center text-gray-400">
+            <p>&copy; 2025 BTC Perpetual Elite Trader. Sistema de Trading Algorítmico Avançado.</p>
+            <p class="text-sm mt-1">Última atualização: <span id="last-update">--</span></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
+

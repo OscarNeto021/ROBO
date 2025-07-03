@@ -1,0 +1,372 @@
+/* BTC Perpetual Elite Trader - Dashboard CSS */
+
+/* Custom animations */
+@keyframes pulse-green {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes pulse-red {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status indicators */
+.status-online {
+    background-color: #10b981;
+    animation: pulse-green 2s infinite;
+}
+
+.status-offline {
+    background-color: #ef4444;
+    animation: pulse-red 2s infinite;
+}
+
+.status-warning {
+    background-color: #f59e0b;
+}
+
+/* Card animations */
+.card-animate {
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #374151;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #6b7280;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+/* Strategy status indicators */
+.strategy-active {
+    background-color: #10b981;
+}
+
+.strategy-inactive {
+    background-color: #6b7280;
+}
+
+.strategy-error {
+    background-color: #ef4444;
+}
+
+/* Position status */
+.position-long {
+    color: #10b981;
+}
+
+.position-short {
+    color: #ef4444;
+}
+
+/* PnL colors */
+.pnl-positive {
+    color: #10b981;
+}
+
+.pnl-negative {
+    color: #ef4444;
+}
+
+.pnl-neutral {
+    color: #6b7280;
+}
+
+/* Button hover effects */
+.btn-primary {
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Chart containers */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    border: 3px solid #374151;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification-success {
+    background-color: #10b981;
+}
+
+.notification-error {
+    background-color: #ef4444;
+}
+
+.notification-warning {
+    background-color: #f59e0b;
+}
+
+.notification-info {
+    background-color: #3b82f6;
+}
+
+/* Table styles */
+.table-hover tbody tr:hover {
+    background-color: #374151;
+}
+
+/* Progress bars */
+.progress-bar {
+    height: 4px;
+    background-color: #374151;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+/* Metric cards */
+.metric-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Strategy toggle */
+.strategy-toggle {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.strategy-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.strategy-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #6b7280;
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+.strategy-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .strategy-slider {
+    background-color: #10b981;
+}
+
+input:checked + .strategy-slider:before {
+    transform: translateX(24px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    .grid {
+        gap: 16px;
+    }
+    
+    .metric-card {
+        padding: 16px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+}
+
+/* Dark theme enhancements */
+.bg-dark-card {
+    background-color: #1f2937;
+    border: 1px solid #374151;
+}
+
+.text-muted {
+    color: #9ca3af;
+}
+
+.border-dark {
+    border-color: #374151;
+}
+
+/* Custom utilities */
+.shadow-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.shadow-glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.shadow-glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Connection status */
+.connection-status {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1000;
+}
+
+.connection-connected {
+    background-color: #10b981;
+    color: white;
+}
+
+.connection-disconnected {
+    background-color: #ef4444;
+    color: white;
+}
+
+.connection-connecting {
+    background-color: #f59e0b;
+    color: white;
+}
+
+/* Performance indicators */
+.performance-excellent {
+    color: #10b981;
+}
+
+.performance-good {
+    color: #84cc16;
+}
+
+.performance-average {
+    color: #f59e0b;
+}
+
+.performance-poor {
+    color: #ef4444;
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #1f2937;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    border: 1px solid #374151;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
